@@ -5,18 +5,21 @@ const globalWithLocalStorage = globalThis as unknown as {
   localStorage: LocalStorage;
 };
 
-if (typeof globalWithLocalStorage.localStorage === "undefined") {
-  globalWithLocalStorage.localStorage = new LocalStorage("./data/localstore");
-}
-
 export class Localstore implements ILocalstore {
+  constructor() {
+    if (typeof globalWithLocalStorage.localStorage === "undefined") {
+      globalWithLocalStorage.localStorage = new LocalStorage(
+        "./data/localstore",
+      );
+    }
+  }
   get(key: string): Promise<string | undefined> {
     const value = globalWithLocalStorage.localStorage.getItem(key);
     return Promise.resolve(value !== null ? value : undefined);
   }
   set(key: string, value: string): Promise<void> {
     return Promise.resolve(
-      globalWithLocalStorage.localStorage.setItem(key, value)
+      globalWithLocalStorage.localStorage.setItem(key, value),
     );
   }
   remove(key: string): Promise<void> {
